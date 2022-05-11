@@ -4,8 +4,7 @@ import fetch from "node-fetch";
 import _ from "lodash";
 import axios from "axios";
 import cors from "cors";
-import request from 'request';
-import needle from 'needle';
+
 
 
 const app = express();
@@ -103,9 +102,24 @@ console.log(token)
 
 
 
+
+// var requestOptions = {
+//   method: 'GET',
+//   headers: myHeaders,
+//   body: raw,
+//   redirect: 'follow'
+// };
+
+
+
 app.get('/test', (req, res) => {
   req.setHeader('content-type', 'application/x-www-form-urlencoded');
   req.setHeader('Authorization', `Bearer ${token}`); // after you have token
+ const request = fetch(urlReddit, req.headers)
+//  const request = axios.get(urlReddit, requestOptions)
+
+
+ 
   // fetch the api
   // body stuff
 
