@@ -67,10 +67,10 @@ const options = {
 // console.log(test);
 
 
-const tok = 'https://www.reddit.com/api/v1/access_token';
+const tokenUrl = 'https://www.reddit.com/api/v1/access_token';
 
 
-const token = app.post(tok, (req, res) => {
+const token = app.post(tokenUrl, (req, res) => {
   const tokens = req.setHeader(process.env.CLIENT_ID, process.env.SECRET_ID);
   const userData = {
     'grant_type': 'password',
@@ -91,7 +91,6 @@ res.json()
 })
 
 console.log(token)
-
 
 
 
@@ -130,15 +129,16 @@ console.log(token)
 app.get('/test', async (req, res) => {
   await req.setHeader('content-type', 'application/x-www-form-urlencoded');
   await req.setHeader('Authorization', `Bearer ${token}`); // after you have token
- const request = await fetch(urlReddit, req.headers);
+  const request = await fetch(urlReddit, req.headers);
 //  const request = await axios.get(urlReddit, requestOptions)
+
 const data = await request.json();
 // const data = await request;
 
 
-  // body stuff if need
+  // body stuff if needed
 
-    // res.send(messages);
+    res.send(data);
 });
 
 
