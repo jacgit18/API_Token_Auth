@@ -8,10 +8,7 @@ import cors from "cors";
 
 
 const app = express();
-
 app.use(cors());
-// app.use(express.json());
-// app.use(express.urlencoded({extended: true}));
 
 
 const urlReddit = "https://www.reddit.com/api/v1";
@@ -74,12 +71,7 @@ const tok = 'https://www.reddit.com/api/v1/access_token';
 
 
 const token = app.post(tok, (req, res) => {
-
- 
-
-
-//   req.header('Authorization');
-  // const token = req.header(process.env.CLIENT_ID, process.env.SECRET_ID);
+  const tokens = req.setHeader(process.env.CLIENT_ID, process.env.SECRET_ID);
   const userData = {
     'grant_type': 'password',
     'username':'jacreddit18',
@@ -88,7 +80,7 @@ const token = app.post(tok, (req, res) => {
 
     const headers = {'User-Agent':'MyAPI/0.0.1'}
 
-  const userId = jwt.decode(token);
+  // const userId = jwt.decode(token);
   // const user = users[userId];
 
 // res.send();
@@ -103,6 +95,29 @@ console.log(token)
 
 
 
+
+
+
+// var config = {
+//   method: 'get',
+//   url: urlReddit,
+//   headers: { 
+//     'Content-Type': 'application/x-www-form-urlencoded', 
+//     'Authorization': `Bearer ${token}`
+//   },
+//   data : {"body": raw}
+// };
+
+// axios(config)
+// .then(function (response) {
+//   console.log(JSON.stringify(response.data));
+// })
+// .catch(function (error) {
+//   console.log(error);
+// });
+
+
+
 // var requestOptions = {
 //   method: 'GET',
 //   headers: myHeaders,
@@ -112,16 +127,16 @@ console.log(token)
 
 
 
-app.get('/test', (req, res) => {
-  req.setHeader('content-type', 'application/x-www-form-urlencoded');
-  req.setHeader('Authorization', `Bearer ${token}`); // after you have token
- const request = fetch(urlReddit, req.headers)
-//  const request = axios.get(urlReddit, requestOptions)
+app.get('/test', async (req, res) => {
+  await req.setHeader('content-type', 'application/x-www-form-urlencoded');
+  await req.setHeader('Authorization', `Bearer ${token}`); // after you have token
+ const request = await fetch(urlReddit, req.headers);
+//  const request = await axios.get(urlReddit, requestOptions)
+const data = await request.json();
+// const data = await request;
 
 
- 
-  // fetch the api
-  // body stuff
+  // body stuff if need
 
     // res.send(messages);
 });
