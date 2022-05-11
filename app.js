@@ -74,11 +74,9 @@ const token = app.post(tokenUrl, (req, res) => {
   const tokens = req.setHeader(process.env.CLIENT_ID, process.env.SECRET_ID);
   const userData = {
     'grant_type': 'password',
-    'username':'jacreddit18',
+    'username':process.env.USERNAME,
     'password': process.env.PASSWORD
     }
-
-    const headers = {'User-Agent':'MyAPI/0.0.1'}
 
   // const userId = jwt.decode(token);
   // const user = users[userId];
@@ -86,7 +84,7 @@ const token = app.post(tokenUrl, (req, res) => {
 // res.send();
 
 // res = req.post(tokengetter, token, userData, headers);
-res.json()
+// res.json()
 
 })
 
