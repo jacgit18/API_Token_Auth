@@ -11,8 +11,10 @@ const app = express();
 app.use(cors());
 
 
-const urlReddit = "https://www.reddit.com/api/v1";
 
+const tokenUrl = 'https://www.reddit.com/api/v1/access_token';
+const urlReddit = "https://www.reddit.com/api/v1/me";
+const urlReddit1 = "https://oauth.reddit.com/api/v1/me";
 
 
 const options = {
@@ -30,144 +32,47 @@ const options = {
 
 }
 
-// axios.request(options).then(function (response) {
-//     console.log("SUCCESS ",response.data);
-//   }).catch(function (err) {
-//     console.error('ERROR ',err)
-//   })
-  
+async function fetchAccessToken(data, setAccessToken, setRefreshToken) {
+  return new Promise(async (resolve, reject)=>{
+      // console.log('fetching access token', data)
+      var url = 'https://www.reddit.com/api/v1/access_token'
+      var form = new FormData()
+      form.append('code', data.authorization_code)
+      form.append('grant_type', 'authorization_code')
+      form.append('redirect_uri', data.redirect_uri)
 
-// const auths = request.get(urlReddit, (err, response) =>{
+      
+      if (!data.authorization_code) return
 
-// }).auth(process.env.CLIENT_ID, process.env.SECRET_ID);
+      // const basic = base64.encode(`${data.client_id}:`)
+      const basic = base64.encode(data.client_id + ':')
+      
+      var options = {
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': `Basic ${basic}`,
+              'User-Agent': 'reddit95'
+          },
+      }
+      // console.log('auth', data.authorization_code, url, form, options)
 
+      try {
+          const access_response = await axios.post(url, form, options)
+          // console.log('access response', access_response.data)
+          setAccessToken(access_response.data.access_token)
+          if (access_response.data.refresh_token) {
+              setRefreshToken(access_response.data.refresh_token)
+          }
 
-//  const data = {
-//       grant_type: 'password',
-//       username: 'jacreddit18',
-//       password: process.env.PASSWORD,
-//     }
-  
-
-//  const headers = {'User-Agent':'MyAPI/0.0.1'}
-
-
-// audience: 'https://www.reddit.com/api/v1'
-
-
-
-// app.post(urlReddit, auths, data, headers);/
-  
-
-// let option = { username: process.env.CLIENT_ID, password: process.env.SECRET_ID };
-// const test = needle.get(urlReddit, option, (err, resp, body) => {
-//    // Whatever
-// });
-
-// console.log(test);
-
-
-const tokenUrl = 'https://www.reddit.com/api/v1/access_token';
-
-
-const token = app.post(tokenUrl, (req, res) => {
-  const tokens = req.setHeader(process.env.CLIENT_ID, process.env.SECRET_ID);
-  const userData = {
-    'grant_type': 'password',
-    'username':process.env.USERNAME,
-    'password': process.env.PASSWORD
-    }
-
-  // const userId = jwt.decode(token);
-  // const user = users[userId];
-
-// res.send();
-
-// res = req.post(tokengetter, token, userData, headers);
-// res.json()
-
-})
-
-console.log(token)
-
-
-
-
-
-
-// var config = {
-//   method: 'get',
-//   url: urlReddit,
-//   headers: { 
-//     'Content-Type': 'application/x-www-form-urlencoded', 
-//     'Authorization': `Bearer ${token}`
-//   },
-//   data : {"body": raw}
-// };
-
-// axios(config)
-// .then(function (response) {
-//   console.log(JSON.stringify(response.data));
-// })
-// .catch(function (error) {
-//   console.log(error);
-// });
-
-
-
-// var requestOptions = {
-//   method: 'GET',
-//   headers: myHeaders,
-//   body: raw,
-//   redirect: 'follow'
-// };
-
-
-
-app.get('/test', async (req, res) => {
-  await req.setHeader('content-type', 'application/x-www-form-urlencoded');
-  await req.setHeader('Authorization', `Bearer ${token}`); // after you have token
-  const request = await fetch(urlReddit, req.headers);
-//  const request = await axios.get(urlReddit, requestOptions)
-
-const data = await request.json();
-// const data = await request;
-
-
-  // body stuff if needed
-
-    res.send(data);
-});
-
-
-// app.get('/messages', (req, res) => {
-//     res.send(messages);
-// });
-
-// app.get('/messages/:id', (req, res) => {
-//     res.send(messages[req.params.id]);
-// });
-
-// app.post('/messages', (req, res) => {
-//     const token = req.header('Authorization');
-//     const userId = jwt.decode(token, '123');
-//     const user = users[userId];
-//     let msg = {user: user.userName, text: req.body.message};
-//     messages.push(msg);
-//     res.json(msg);
-// });
-
-
-// app.post('/register', (req, res) => {
-//     let registerData = req.body;
-//     let newIndex = users.push(registerData);
-//     let userId = newIndex - 1;
-
-//     let token = jwt.sign(userId, '123');
-
-//     res.json(token);
-// });
-
+          resolve()
+          // goToFrontPage()
+      } catch (e) {
+          console.log('failed to fetch access token', e)
+          // reject()
+          resolve(fetchNewAccessToken(data, setAccessToken))
+      }
+  })   
+}
 
 
 export default app;
