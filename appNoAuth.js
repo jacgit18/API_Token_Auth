@@ -1,15 +1,17 @@
-const fetch = require('node-fetch');
-const _ = require('lodash');
-const axios = require('axios');
-const jsonData = require('./json/song.json')
+import fetch from "node-fetch";
+import _ from "lodash";
+import axios from "axios";
+import express from "express";
+import jsonData from './json/song.json';
+import cors from "cors";
 
 
+const app = express();
+app.use(cors());
 
-const urlroute2 = 'https://swapi.dev/api/planets';
+const apiFullUrlWithEndpoint = 'https://swapi.dev/api/planets';
 
-let redditClient = process.env.CLIENT_ID;
-let redditSecret = process.env.SECRET_ID;
-const urlReddit = 'https://www.reddit.com/api/v1';
+
 
 
 // fetch is a method that returns a promise that resolves to a Response object.

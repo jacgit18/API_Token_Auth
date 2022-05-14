@@ -1,79 +1,47 @@
-import express from "express";
-import jwt from "jsonwebtoken";
-import fetch from "node-fetch";
-import _ from "lodash";
-import axios from "axios";
-import cors from "cors";
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import jsonwebtoken from 'jsonwebtoken';
 
-
+import routes from './src/routes/crmRoutes';
 
 const app = express();
-app.use(cors());
+
+// mongoose connection
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb+srv://jac:jactest12@cluster0.twral.mongodb.net/test', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+// bodyparser setup
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// JWT setup
+app.use((req, res, next) => {
+    if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+        jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', (err, decode) => {
+            if (err) req.user = undefined;
+            req.user = decode;
+            next();
+        });
+    } else {
+        req.user = undefined;
+        next();
+    }
+});
+
+routes(app);
+
+// serving static files
+app.use(express.static('public'));
+
+app.get('/', (req, res) =>
+    res.send(`Node and express server is running on port ${PORT}`)
+);
 
 
 
-const tokenUrl = 'https://www.reddit.com/api/v1/access_token';
-const urlReddit = "https://www.reddit.com/api/v1/me";
-const urlReddit1 = "https://oauth.reddit.com/api/v1/me";
 
-
-const options = {
-  method: 'POST',
-  url: 'https://www.reddit.com/api/v1/access_token',
-  headers: {'content-type': 'application/x-www-form-urlencoded'},
-  data: {
-    grant_type: 'password',
-    username: 'jacreddit18',
-    password: process.env.PASSWORD,
-    client_id:  process.env.CLIENT_ID,
-    client_secret: process.env.SECRET_ID,
-    redirect_uri: 'https://www.linkedin.com/in/joshua-carpentier/',
-  }
-
-}
-
-async function fetchAccessToken(data, setAccessToken, setRefreshToken) {
-  return new Promise(async (resolve, reject)=>{
-      // console.log('fetching access token', data)
-      var url = 'https://www.reddit.com/api/v1/access_token'
-      var form = new FormData()
-      form.append('code', data.authorization_code)
-      form.append('grant_type', 'authorization_code')
-      form.append('redirect_uri', data.redirect_uri)
-
-      
-      if (!data.authorization_code) return
-
-      // const basic = base64.encode(`${data.client_id}:`)
-      const basic = base64.encode(data.client_id + ':')
-      
-      var options = {
-          headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': `Basic ${basic}`,
-              'User-Agent': 'reddit95'
-          },
-      }
-      // console.log('auth', data.authorization_code, url, form, options)
-
-      try {
-          const access_response = await axios.post(url, form, options)
-          // console.log('access response', access_response.data)
-          setAccessToken(access_response.data.access_token)
-          if (access_response.data.refresh_token) {
-              setRefreshToken(access_response.data.refresh_token)
-          }
-
-          resolve()
-          // goToFrontPage()
-      } catch (e) {
-          console.log('failed to fetch access token', e)
-          // reject()
-          resolve(fetchNewAccessToken(data, setAccessToken))
-      }
-  })   
-}
-
-
-export default app;
-// export default routes;
+module.exports = app
