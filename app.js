@@ -37,9 +37,9 @@ routes(app);
 // serving static files
 app.use(express.static('public'));
 
-app.get('/', (req, res) =>
-    res.send(`Node and express server is running on port ${PORT}`)
-);
+// app.get('/', (req, res) =>
+//     res.send(`Node and express server is running on port ${PORT}`)
+// );
 
 
 

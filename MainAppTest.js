@@ -32,6 +32,8 @@ const options = {
 
 }
 
+app.route().post((req, res)=>{ res.send('Post test no action')})
+
 async function fetchAccessToken(data, setAccessToken, setRefreshToken) {
   return new Promise(async (resolve, reject)=>{
       // console.log('fetching access token', data)
