@@ -30,6 +30,36 @@ const urlroute2 = 'https://swapi.dev/api/planets';
 // const secret = process.env.SECRET
 // const id = process.env.ID
 
+function dictionaryCheck(dict) {
+  let results = {}; // can use array or something else
+  let currKey = "";
+   function recTraverse(dict) {
+ 
+    Object.keys(dict).forEach(key => {
+  // array would be considered object
+      let DataVal = dict[key];
+      let objectType = typeof(DataVal) === 'object'
+      let booleanType = typeof(DataVal) === 'boolean'
+      let stringType = typeof(DataVal) === 'string'
+      let numberType = typeof(DataVal) === 'number'
+
+    // typeof(DataVal) === "string" ? "string" : "number"
+
+      if (objectType) {
+  // do something then pass current obj recursively  
+        results[dict] = DataVal
+        recTraverse(dict[key]);
+      } else if(booleanType|| stringType || numberType) {
+       // do other things then check next key  
+       if(stringType) console.log(key)
+
+      }
+    });
+  }
+   recTraverse(dict);
+  return results;
+}
+
 
 
 
@@ -39,8 +69,12 @@ const urlroute2 = 'https://swapi.dev/api/planets';
 //    return 
    app.get('/test', async (request, response) => {
   try{
-   const api_res = await axios.get(urlroute2);
-   const data = await api_res; 
+   const api_res = await fetch(urlroute2);
+   const data = await api_res.json(); 
+  // Data doesnt render in browers 
+  //  const api_res = await axios.get(urlroute2);
+  //  const data = await api_res; 
+  //  console.log(data.data)
 
     let options = {
       success: true,
@@ -48,7 +82,7 @@ const urlroute2 = 'https://swapi.dev/api/planets';
     statusText: api_res.statusText
     }
 
-   response.send(data)
+   response.send(data.results)
   } catch (e) {
 
   }

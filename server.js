@@ -1,9 +1,9 @@
-import app from './app';
+// import app from './app';
 // import app from './MainAppTest';
 // import app from './appNoAuth';
 // import app from './appPrev';
 // import app from './appTokenPost';
-// import app from './appUrlDestruct';
+import app from './appUrlDestruct';
 
 
 

@@ -6,9 +6,29 @@ import axios from "axios";
 import cors from "cors";
 
 
+var corsOptions = {
+  exposedHeaders: ['refresh-token'],
+  origin: '*',
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Access-Control',
+    'Authorization',
+    'Cache-Control',
+    'Content-Language',
+    'Expires',
+    'Last-Modified',
+    'Pragma',
+    'x-Access-Token'
+  ],
+  crossdomain: true
+};
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(cors(corsOptions));
 
 
 
@@ -32,7 +52,15 @@ const options = {
 
 }
 
+
+
+
 app.route().post((req, res)=>{ res.send('Post test no action')})
+
+
+
+
+
 
 async function fetchAccessToken(data, setAccessToken, setRefreshToken) {
   return new Promise(async (resolve, reject)=>{
